@@ -1,70 +1,32 @@
 // API KEY
 // 32c267b5
 
-const fetchData = async (searchTerm) => {
-  const response = await axios.get("http://www.omdbapi.com/", {
-    params: { apikey: "32c267b5", s: searchTerm, type: "movie" },
-  });
-
-  if (response.data.Error) {
-    return [];
-  }
-
-  return response.data.Search;
-};
-
-const root = document.querySelector(".autocomplete");
-root.innerHTML = `
-<label><b>Search For a Movie</b></label>
-<input class="input"/>
-<div class="dropdown">
-  <div class="dropdown-menu">
-    <div class="dropdown-content results"></div>
-  </div>
-</div>
-`;
-
-const input = document.querySelector("input");
-// dropdown of search results
-// visibility depends on is-active class
-const dropdown = document.querySelector(".dropdown");
-const resultsWrapper = document.querySelector(".results");
-
-const onInput = async (event) => {
-  const movies = await fetchData(event.target.value);
-  if (!movies.length) {
-    dropdown.classList.remove("is-active");
-    return;
-  }
-  // clear old results after new search
-  resultsWrapper.innerHTML = "";
-  dropdown.classList.add("is-active");
-  // render list of movies
-  for (let movie of movies) {
-    const option = document.createElement("a");
+createAutoComplete({
+  root: document.querySelector(".autocomplete"),
+  renderOption(movie) {
     const imgSrc = movie.Poster === "N/A" ? "" : movie.Poster;
-    option.classList.add("dropdown-item");
-    option.innerHTML = `
+    return `
       <img src="${imgSrc}"/>
-      ${movie.Title}
+      ${movie.Title} (${movie.Year})
     `;
-    option.addEventListener("click", () => {
-      dropdown.classList.remove("is-active");
-      input.value = movie.Title;
-      onMovieSelect(movie);
+  },
+  onOptionSelect(movie) {
+    onMovieSelect(movie);
+  },
+  inputValue(movie) {
+    return movie.Title;
+  },
+  async fetchData(searchTerm) {
+    const response = await axios.get("http://www.omdbapi.com/", {
+      params: { apikey: "32c267b5", s: searchTerm, type: "movie" },
     });
 
-    resultsWrapper.appendChild(option);
-  }
-};
+    if (response.data.Error) {
+      return [];
+    }
 
-// whenever input is detected, it is run through the debounce shield -> which runs onInput
-input.addEventListener("input", debounce(onInput, 500));
-
-document.addEventListener("click", (event) => {
-  if (!root.contains(event.target)) {
-    dropdown.classList.remove("is-active");
-  }
+    return response.data.Search;
+  },
 });
 
 const onMovieSelect = async (movie) => {
