@@ -1,5 +1,3 @@
-// API KEY
-// 32c267b5
 const autoCompleteConfig = {
   renderOption(movie) {
     const imgSrc = movie.Poster === "N/A" ? "" : movie.Poster;
@@ -76,6 +74,8 @@ const beforeComparison = () => {
     const rightEl = rightSideElements[index];
     leftEl.classList.remove("is-warning");
     rightEl.classList.remove("is-warning");
+    leftEl.classList.remove("is-success");
+    rightEl.classList.remove("is-success");
     leftEl.classList.add("is-primary");
     rightEl.classList.add("is-primary");
   });
@@ -96,9 +96,11 @@ const runComparison = () => {
     const rightSideValue = parseInt(rightStat.dataset.value) || 0;
 
     if (rightSideValue > leftSideValue) {
+      rightStat.classList.add("is-success");
       leftStat.classList.remove("is-primary");
       leftStat.classList.add("is-warning");
     } else {
+      leftStat.classList.add("is-success");
       rightStat.classList.remove("is-primary");
       rightStat.classList.add("is-warning");
     }
