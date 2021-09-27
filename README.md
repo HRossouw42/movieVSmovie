@@ -23,5 +23,5 @@ This little site makes it easy!
 
 # Future Improvements
 
-- add a little cheer for the winner
-- adjust box office winnings according to inflation
+- [ ] add a little cheer for the winner
+- [ ] adjust box office winnings according to inflation
